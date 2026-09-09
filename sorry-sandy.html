@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>I'm sorry, Sandy</title>
+<title>I'm sorry, Sandeep</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Parisienne&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&display=swap" rel="stylesheet">
@@ -253,36 +253,36 @@
     <div class="slides" id="slides">
 
       <!-- Slide 0: opening -->
-      <div class="slide active" data-gif="sorry sad puppy eyes">
+      <div class="slide active" data-gif="sorry rose romantic love">
         <div class="eyebrow-emoji">🥺</div>
-        <div class="headline">I'm sorry, Sandy.</div>
+        <div class="headline">I'm sorry, Sandeep.</div>
         <div class="subline">Can I have a minute of your time?</div>
         <div class="gif-frame"><span class="fallback">💔</span></div>
       </div>
 
       <!-- Slide 1 -->
-      <div class="slide" data-gif="im sorry apology cute">
+      <div class="slide" data-gif="im sorry love you romantic">
         <div class="eyebrow-emoji">😔</div>
         <div class="message">I messed up&hellip; and I'm really, truly sorry for that.</div>
         <div class="gif-frame"><span class="fallback">😢</span></div>
       </div>
 
       <!-- Slide 2 -->
-      <div class="slide" data-gif="i promise flowers cute">
+      <div class="slide" data-gif="i promise you love romantic">
         <div class="eyebrow-emoji">🌷</div>
         <div class="message">I promise I'll be better &mdash; for you, always.</div>
         <div class="gif-frame"><span class="fallback">🤍</span></div>
       </div>
 
       <!-- Slide 3 -->
-      <div class="slide" data-gif="please forgive me hug">
+      <div class="slide" data-gif="forgive me hug love romantic">
         <div class="eyebrow-emoji">🥹</div>
         <div class="message">Please forgive me&hellip; you mean so much to me.</div>
         <div class="gif-frame"><span class="fallback">🤗</span></div>
       </div>
 
       <!-- Slide 4: personal note -->
-      <div class="slide" data-gif="i love you hug cute">
+      <div class="slide" data-gif="i love you couple romantic hug">
         <div class="eyebrow-emoji">💌</div>
         <div class="note-box">
           I'm really sorry, my love. I accidentally upset the most precious
@@ -299,15 +299,15 @@
         <div class="eyebrow-emoji">💞</div>
         <div class="photo-pair">
           <div class="polaroid">
-            <img src="his-photo.jpg" alt="him" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'fallback',style:'height:130px;display:flex;align-items:center;justify-content:center;font-size:40px;',innerHTML:'🧑'}))">
-            <span>Him</span>
+            <img src="me-photo.jpg" alt="me" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'fallback',style:'height:130px;display:flex;align-items:center;justify-content:center;font-size:40px;',innerHTML:'👩'}))">
+            <span>Me</span>
           </div>
           <div class="polaroid">
-            <img src="her-photo.jpg" alt="her" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'fallback',style:'height:130px;display:flex;align-items:center;justify-content:center;font-size:40px;',innerHTML:'👩'}))">
-            <span>Sandy</span>
+            <img src="sandeep-photo.jpg" alt="sandeep" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'fallback',style:'height:130px;display:flex;align-items:center;justify-content:center;font-size:40px;',innerHTML:'🧑'}))">
+            <span>Sandeep</span>
           </div>
         </div>
-        <div class="final-headline">I love you, Sandy 💗</div>
+        <div class="final-headline">I love you, Sandeep 💗</div>
         <div class="subline" style="margin-top:6px;">Forever yours.</div>
       </div>
 
@@ -323,10 +323,10 @@
 <script>
 /* =========================================================
    HOW TO PERSONALIZE
-   - Change "Sandy" in the slides above to your partner's name.
+   - "Sandeep" is used throughout — search/replace it if needed.
    - Edit the wording of any .message / .note-box directly.
    - Replace the two photos: put files named exactly
-       his-photo.jpg   and   her-photo.jpg
+       me-photo.jpg   and   sandeep-photo.jpg
      next to this HTML file (or edit the src="" paths above
      to point at your own image files/URLs).
    - GIFs are pulled live from Giphy based on the data-gif
@@ -371,13 +371,16 @@ slides.forEach(slide => {
   const tag = slide.getAttribute('data-gif');
   if (!tag) return;
   const frame = slide.querySelector('.gif-frame');
-  fetch(`https://api.giphy.com/v1/gifs/translate?api_key=${GIPHY_KEY}&s=${encodeURIComponent(tag)}&rating=g`)
+  fetch(`https://api.giphy.com/v1/gifs/search?api_key=${GIPHY_KEY}&q=${encodeURIComponent(tag)}&limit=10&rating=g&lang=en`)
     .then(r => r.json())
     .then(data => {
-      const url = data && data.data && data.data.images && data.data.images.fixed_width
-        ? data.data.images.fixed_width.url
-        : null;
-      if (url && frame){
+      const list = data && data.data ? data.data : [];
+      if (!list.length || !frame) return;
+      const pick = list[Math.floor(Math.random() * list.length)];
+      const url = pick.images && pick.images.fixed_height
+        ? pick.images.fixed_height.url
+        : (pick.images && pick.images.fixed_width ? pick.images.fixed_width.url : null);
+      if (url){
         frame.innerHTML = `<img src="${url}" alt="">`;
       }
     })
