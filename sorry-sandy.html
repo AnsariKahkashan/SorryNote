@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>I'm sorry, Sandy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Parisienne&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&display=swap" rel="stylesheet">
+<style>
+  /* =========================================================
+     EDIT ZONE — everything you'd want to personalize is here
+     ========================================================= */
+  :root{
+    --ink:      #3b1f2b;   /* deep plum-brown text */
+    --cream:    #fff6f2;   /* card surface */
+    --rose:     #e8858f;   /* soft rose accent */
+    --gold:     #d4a657;   /* warm gold accent */
+    --wine-1:   #2b0f1f;
+    --wine-2:   #4a1942;
+    --wine-3:   #6b2142;
+  }
+
+  *{ box-sizing: border-box; }
+
+  html, body{
+    margin:0; padding:0; height:100%;
+    background: radial-gradient(120% 140% at 50% 0%, var(--wine-3), var(--wine-2) 55%, var(--wine-1) 100%);
+    font-family: 'Cormorant Garamond', serif;
+    color: var(--ink);
+    overflow: hidden;
+  }
+
+  .app{
+    position: relative;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* floating hearts, drawn once on load — the single orchestrated motion moment */
+  .bg-hearts{
+    position: absolute; inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 1;
+  }
+  .bg-hearts span{
+    position: absolute;
+    bottom: -10%;
+    font-size: 22px;
+    opacity: 0;
+    animation: float-up linear infinite;
+    color: rgba(255, 210, 220, 0.55);
+  }
+  @keyframes float-up{
+    0%   { transform: translateY(0) rotate(0deg); opacity: 0; }
+    10%  { opacity: 0.9; }
+    90%  { opacity: 0.5; }
+    100% { transform: translateY(-115vh) rotate(25deg); opacity: 0; }
+  }
+
+  .stage{
+    position: relative;
+    z-index: 2;
+    width: min(420px, 92vw);
+    height: min(680px, 88vh);
+    background: var(--cream);
+    border-radius: 28px;
+    box-shadow: 0 30px 70px rgba(10, 2, 8, 0.55), 0 0 0 1px rgba(255,255,255,0.06);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .slides{
+    position: relative;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  .slide{
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 34px 30px 20px;
+    opacity: 0;
+    transform: scale(0.97);
+    transition: opacity 0.55s ease, transform 0.55s ease;
+    pointer-events: none;
+  }
+  .slide.active{
+    opacity: 1;
+    transform: scale(1);
+    pointer-events: auto;
+  }
+
+  .eyebrow-emoji{
+    font-size: 34px;
+    margin-bottom: 6px;
+    line-height: 1;
+  }
+
+  .headline{
+    font-family: 'Parisienne', cursive;
+    font-size: 44px;
+    line-height: 1.15;
+    color: var(--rose);
+    margin: 4px 0 10px;
+  }
+
+  .subline{
+    font-size: 20px;
+    font-style: italic;
+    color: #6b4a57;
+    margin-bottom: 18px;
+  }
+
+  .message{
+    font-size: 22px;
+    line-height: 1.5;
+    max-width: 30ch;
+    margin: 6px 0 18px;
+  }
+
+  .gif-frame{
+    width: 190px;
+    height: 190px;
+    border-radius: 20px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #f6dfe0, #f2e6cf);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 6px 0 18px;
+    box-shadow: 0 10px 24px rgba(120, 50, 70, 0.18);
+  }
+  .gif-frame img{
+    width: 100%; height: 100%; object-fit: cover;
+    display: block;
+  }
+  .gif-frame .fallback{
+    font-size: 54px;
+  }
+
+  .note-box{
+    font-size: 19px;
+    line-height: 1.6;
+    max-width: 32ch;
+    text-align: left;
+    background: rgba(232, 133, 143, 0.08);
+    border: 1px solid rgba(232, 133, 143, 0.25);
+    border-radius: 16px;
+    padding: 18px 20px;
+    margin-bottom: 6px;
+  }
+
+  /* final slide — photos */
+  .photo-pair{
+    display: flex;
+    gap: 14px;
+    margin: 8px 0 20px;
+  }
+  .polaroid{
+    width: 118px;
+    background: #fff;
+    padding: 8px 8px 20px;
+    border-radius: 6px;
+    box-shadow: 0 12px 22px rgba(0,0,0,0.25);
+    transform: rotate(-6deg);
+  }
+  .polaroid:last-child{ transform: rotate(6deg); }
+  .polaroid img{
+    width: 100%;
+    height: 130px;
+    object-fit: cover;
+    border-radius: 2px;
+    background: #f1e3e6;
+    display:block;
+  }
+  .polaroid span{
+    display:block;
+    text-align:center;
+    font-family:'Parisienne', cursive;
+    font-size:16px;
+    color: var(--rose);
+    margin-top:6px;
+  }
+
+  .final-headline{
+    font-family: 'Parisienne', cursive;
+    font-size: 40px;
+    color: var(--rose);
+  }
+
+  /* controls */
+  .controls{
+    padding: 14px 24px 22px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .dots{
+    display:flex; gap: 8px;
+  }
+  .dots span{
+    width: 7px; height: 7px; border-radius: 50%;
+    background: rgba(232, 133, 143, 0.25);
+    transition: background 0.3s ease, transform 0.3s ease;
+  }
+  .dots span.active{
+    background: var(--rose);
+    transform: scale(1.3);
+  }
+
+  .next-btn{
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 19px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: #fff;
+    background: linear-gradient(120deg, var(--rose), var(--gold));
+    border: none;
+    padding: 12px 34px;
+    border-radius: 999px;
+    cursor: pointer;
+    box-shadow: 0 10px 22px rgba(200, 90, 100, 0.35);
+    transition: transform 0.15s ease;
+  }
+  .next-btn:active{ transform: scale(0.96); }
+
+  @media (max-width: 380px){
+    .headline{ font-size: 36px; }
+    .message{ font-size: 20px; }
+    .gif-frame{ width: 160px; height: 160px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="bg-hearts" id="bgHearts"></div>
+
+  <div class="stage">
+    <div class="slides" id="slides">
+
+      <!-- Slide 0: opening -->
+      <div class="slide active" data-gif="sorry sad puppy eyes">
+        <div class="eyebrow-emoji">🥺</div>
+        <div class="headline">I'm sorry, Sandy.</div>
+        <div class="subline">Can I have a minute of your time?</div>
+        <div class="gif-frame"><span class="fallback">💔</span></div>
+      </div>
+
+      <!-- Slide 1 -->
+      <div class="slide" data-gif="im sorry apology cute">
+        <div class="eyebrow-emoji">😔</div>
+        <div class="message">I messed up&hellip; and I'm really, truly sorry for that.</div>
+        <div class="gif-frame"><span class="fallback">😢</span></div>
+      </div>
+
+      <!-- Slide 2 -->
+      <div class="slide" data-gif="i promise flowers cute">
+        <div class="eyebrow-emoji">🌷</div>
+        <div class="message">I promise I'll be better &mdash; for you, always.</div>
+        <div class="gif-frame"><span class="fallback">🤍</span></div>
+      </div>
+
+      <!-- Slide 3 -->
+      <div class="slide" data-gif="please forgive me hug">
+        <div class="eyebrow-emoji">🥹</div>
+        <div class="message">Please forgive me&hellip; you mean so much to me.</div>
+        <div class="gif-frame"><span class="fallback">🤗</span></div>
+      </div>
+
+      <!-- Slide 4: personal note -->
+      <div class="slide" data-gif="i love you hug cute">
+        <div class="eyebrow-emoji">💌</div>
+        <div class="note-box">
+          I'm really sorry, my love. I accidentally upset the most precious
+          and adorable person in my life &mdash; you. 🥹<br><br>
+          Please forgive me if I hurt you or wasted even a little of your
+          precious time. I never meant to. You deserve so much better,
+          and I promise to be more careful with your heart from now on. 💕
+        </div>
+        <div class="gif-frame"><span class="fallback">🌹</span></div>
+      </div>
+
+      <!-- Slide 5: final, photos + love message -->
+      <div class="slide" data-final="true">
+        <div class="eyebrow-emoji">💞</div>
+        <div class="photo-pair">
+          <div class="polaroid">
+            <img src="his-photo.jpg" alt="him" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'fallback',style:'height:130px;display:flex;align-items:center;justify-content:center;font-size:40px;',innerHTML:'🧑'}))">
+            <span>Him</span>
+          </div>
+          <div class="polaroid">
+            <img src="her-photo.jpg" alt="her" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'fallback',style:'height:130px;display:flex;align-items:center;justify-content:center;font-size:40px;',innerHTML:'👩'}))">
+            <span>Sandy</span>
+          </div>
+        </div>
+        <div class="final-headline">I love you, Sandy 💗</div>
+        <div class="subline" style="margin-top:6px;">Forever yours.</div>
+      </div>
+
+    </div>
+
+    <div class="controls">
+      <div class="dots" id="dots"></div>
+      <button class="next-btn" id="nextBtn">Next ❤️</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =========================================================
+   HOW TO PERSONALIZE
+   - Change "Sandy" in the slides above to your partner's name.
+   - Edit the wording of any .message / .note-box directly.
+   - Replace the two photos: put files named exactly
+       his-photo.jpg   and   her-photo.jpg
+     next to this HTML file (or edit the src="" paths above
+     to point at your own image files/URLs).
+   - GIFs are pulled live from Giphy based on the data-gif
+     tag on each slide, so they'll vary a little each time
+     the page is opened — feel free to edit those tags too.
+   ========================================================= */
+
+const GIPHY_KEY = "dc6zaTOxFJmzC"; // Giphy's public demo key
+
+const slides = Array.from(document.querySelectorAll('.slide'));
+const dotsEl = document.getElementById('dots');
+const nextBtn = document.getElementById('nextBtn');
+let current = 0;
+
+// build progress dots
+slides.forEach((_, i) => {
+  const d = document.createElement('span');
+  if (i === 0) d.classList.add('active');
+  dotsEl.appendChild(d);
+});
+const dots = Array.from(dotsEl.children);
+
+function showSlide(i){
+  slides[current].classList.remove('active');
+  dots[current].classList.remove('active');
+  current = i;
+  slides[current].classList.add('active');
+  dots[current].classList.add('active');
+  nextBtn.textContent = (current === slides.length - 1) ? "Restart 💫" : "Next ❤️";
+}
+
+nextBtn.addEventListener('click', () => {
+  if (current === slides.length - 1){
+    showSlide(0);
+  } else {
+    showSlide(current + 1);
+  }
+});
+
+// fetch a small themed gif per slide from Giphy and drop it into the frame
+slides.forEach(slide => {
+  const tag = slide.getAttribute('data-gif');
+  if (!tag) return;
+  const frame = slide.querySelector('.gif-frame');
+  fetch(`https://api.giphy.com/v1/gifs/translate?api_key=${GIPHY_KEY}&s=${encodeURIComponent(tag)}&rating=g`)
+    .then(r => r.json())
+    .then(data => {
+      const url = data && data.data && data.data.images && data.data.images.fixed_width
+        ? data.data.images.fixed_width.url
+        : null;
+      if (url && frame){
+        frame.innerHTML = `<img src="${url}" alt="">`;
+      }
+    })
+    .catch(() => { /* keep the emoji fallback already in the frame */ });
+});
+
+// gentle floating hearts in the background
+const heartsHost = document.getElementById('bgHearts');
+const heartChars = ['💗','💕','💖','🩷'];
+for (let i = 0; i < 16; i++){
+  const s = document.createElement('span');
+  s.textContent = heartChars[Math.floor(Math.random() * heartChars.length)];
+  s.style.left = Math.random() * 100 + '%';
+  s.style.fontSize = (14 + Math.random() * 18) + 'px';
+  s.style.animationDuration = (7 + Math.random() * 8) + 's';
+  s.style.animationDelay = (Math.random() * 10) + 's';
+  heartsHost.appendChild(s);
+}
+</script>
+
+</body>
+</html>
