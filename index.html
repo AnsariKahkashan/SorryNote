@@ -253,36 +253,36 @@
     <div class="slides" id="slides">
 
       <!-- Slide 0: opening -->
-      <div class="slide active" data-gif="sorry rose romantic love">
+      <div class="slide active" data-gif="peach and goma sad sorry">
         <div class="eyebrow-emoji">🥺</div>
         <div class="headline">I'm sorry, Sandeep.</div>
         <div class="subline">Can I have a minute of your time?</div>
-        <div class="gif-frame"><span class="fallback">💔</span></div>
+         <div class="gif-frame"><img src="peach-goma-time.gif" alt="hug"></div>
       </div>
 
       <!-- Slide 1 -->
-      <div class="slide" data-gif="im sorry love you romantic">
+      <div class="slide" data-gif="peach and goma crying sorry">
         <div class="eyebrow-emoji">😔</div>
         <div class="message">I messed up&hellip; and I'm really, truly sorry for that.</div>
-        <div class="gif-frame"><span class="fallback">😢</span></div>
+        <div class="gif-frame"><img src="peach-goma-sorry.gif" alt="hug"></div>
       </div>
 
       <!-- Slide 2 -->
-      <div class="slide" data-gif="i promise you love romantic">
+      <div class="slide" data-gif="peach and goma promise pinky">
         <div class="eyebrow-emoji">🌷</div>
         <div class="message">I promise I'll be better &mdash; for you, always.</div>
-        <div class="gif-frame"><span class="fallback">🤍</span></div>
+        <div class="gif-frame"><img src="peach-goma-pinkypromise.gif" alt="hug"></div>
       </div>
 
       <!-- Slide 3 -->
-      <div class="slide" data-gif="forgive me hug love romantic">
+      <div class="slide">
         <div class="eyebrow-emoji">🥹</div>
         <div class="message">Please forgive me&hellip; you mean so much to me.</div>
-        <div class="gif-frame"><span class="fallback">🤗</span></div>
+        <div class="gif-frame"><img src="peach-goma-hug.gif" alt="hug"></div>
       </div>
 
       <!-- Slide 4: personal note -->
-      <div class="slide" data-gif="i love you couple romantic hug">
+      <div class="slide" data-gif="peach and goma kiss love">
         <div class="eyebrow-emoji">💌</div>
         <div class="note-box">
           I'm really sorry, my love. I accidentally upset the most precious
@@ -329,9 +329,12 @@
        me-photo.jpg   and   sandeep-photo.jpg
      next to this HTML file (or edit the src="" paths above
      to point at your own image files/URLs).
-   - GIFs are pulled live from Giphy based on the data-gif
-     tag on each slide, so they'll vary a little each time
-     the page is opened — feel free to edit those tags too.
+   - GIFs use the cute "Peach & Goma" style throughout. One slide
+     uses your uploaded peach-goma-hug.gif directly (keep it in
+     the same folder as this HTML file). The other slides fetch
+     matching Peach & Goma-style gifs live from Giphy based on
+     their data-gif tag — edit those tags if you want a different
+     look.
    ========================================================= */
 
 const GIPHY_KEY = "dc6zaTOxFJmzC"; // Giphy's public demo key
@@ -367,25 +370,35 @@ nextBtn.addEventListener('click', () => {
 });
 
 // fetch a small themed gif per slide from Giphy and drop it into the frame
+const usedGifUrls = new Set();
+
 slides.forEach(slide => {
   const tag = slide.getAttribute('data-gif');
   if (!tag) return;
   const frame = slide.querySelector('.gif-frame');
-  fetch(`https://api.giphy.com/v1/gifs/search?api_key=${GIPHY_KEY}&q=${encodeURIComponent(tag)}&limit=10&rating=g&lang=en`)
+  fetch(`https://api.giphy.com/v1/gifs/search?api_key=${GIPHY_KEY}&q=${encodeURIComponent(tag)}&limit=15&rating=g&lang=en`)
     .then(r => r.json())
     .then(data => {
       const list = data && data.data ? data.data : [];
       if (!list.length || !frame) return;
-      const pick = list[Math.floor(Math.random() * list.length)];
+      // prefer a gif we haven't already used on another slide
+      const fresh = list.filter(g => {
+        const u = (g.images && g.images.fixed_height) ? g.images.fixed_height.url : null;
+        return u && !usedGifUrls.has(u);
+      });
+      const pool = fresh.length ? fresh : list;
+      const pick = pool[Math.floor(Math.random() * pool.length)];
       const url = pick.images && pick.images.fixed_height
         ? pick.images.fixed_height.url
         : (pick.images && pick.images.fixed_width ? pick.images.fixed_width.url : null);
       if (url){
+        usedGifUrls.add(url);
         frame.innerHTML = `<img src="${url}" alt="">`;
       }
     })
     .catch(() => { /* keep the emoji fallback already in the frame */ });
 });
+
 
 // gentle floating hearts in the background
 const heartsHost = document.getElementById('bgHearts');
